@@ -1,0 +1,23 @@
+<h1><%= @show.name %> Episodes</h1>
+
+<table class='showtable'>
+  <tr>
+    <th>No</th>
+    <th>Title</th>
+    <th>Air Date</th>
+    <th>Season</th>
+  </tr>
+ 
+<% @episodes.each do |episode| %>
+  <tr>
+    <td><%= episode.no %></td>
+    <td><%= episode.title %></td>
+    <td><%= episode.air_date %></td>
+    <td><%= episode.season %></td>
+  </tr>
+<% end %>
+</table>
+
+<p>
+  <%= link_to 'Back to Shows', shows_path %>
+</p>

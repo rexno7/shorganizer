@@ -1,0 +1,36 @@
+<%= form_for @show do |f| %>
+  <% if @show.errors.any? %>
+  <div id="error_explanation">
+    <h2 class='error'><%= pluralize(@show.errors.count, "error") %> prohibited
+      this show from being saved:</h2>
+    <ul>
+    <% @show.errors.full_messages.each do |msg| %>
+      <li class='error'><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <p>
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </p>
+ 
+  <p>
+    <%= f.label :watch_url %><br>
+    <%= f.text_field :watch_url %>
+  </p>
+
+  <p>
+    <%= f.label :scrape_url %><br>
+    <%= f.text_field :scrape_url %>
+  </p>
+
+  <p>
+    <%= f.label :genre %><br>
+    <%= f.text_field :genre %>
+  </p>
+ 
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>

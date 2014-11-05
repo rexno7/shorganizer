@@ -1,0 +1,24 @@
+<h1><%= @show.name %></h1>
+
+<p>
+  <strong>Name:</strong>
+  <%= @show.name %>
+</p>
+
+<p>
+  <strong>Watch URL:</strong>
+  <%= @show.watch_url %>
+</p>
+
+<p>
+  <strong>Scrape URL:</strong>
+  <%= @show.scrape_url %>
+</p>
+
+<p>
+  <strong>Genre:</strong>
+  <%= @show.genre %>
+</p>
+
+<%= link_to 'Back', shows_url %>
+| <%= link_to 'Edit', edit_show_path(@show) %>

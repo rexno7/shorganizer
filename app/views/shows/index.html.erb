@@ -1,0 +1,57 @@
+<h1>Shows</h1>
+
+<h2>Shows Directory</h2>
+
+<table class='showtable'>
+  <tr>
+    <th>Name</th>
+    <th>Genre</th>
+    <th>Watch URL</th>
+    <th>Scrape URL</th>
+  </tr>
+ 
+<% @shows.each do |show| %>
+  <tr>
+    <td><%= link_to show.name, show_episodes_path(show) %></td>
+    <td><%= show.genre %></td>
+    <td><%= link_to show.watch_url, show.watch_url, :target => '_blank' %></td>
+    <td><%= link_to show.scrape_url, show.scrape_url, :target => '_blank' %></td>
+    <td><%= link_to 'Show', show_path(show) %></td>
+    <td><%= link_to 'Edit', edit_show_path(show) %></td>
+    <td><%= link_to 'Delete', show_path(show),
+                    method: :delete, data: { confirm: 'Are you sure?' } %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<p>
+  <%= link_to 'Add Show', new_show_path %>
+</p>
+
+<h2>Upcoming Schedule</h2>
+
+<div class="displayWrapper">
+  <table class="upcoming-table">
+<% @episode_hash.keys.each do |day| %>
+    <tr<%= (day == Date.today) ? ' class=today' : '' %>>
+      <td class="day-column">
+        <div><%= day.strftime("%m/%d %A") %></div>
+      </td>
+      <td class="show-column">
+  <% @episode_hash[day].each do |ep| %>
+        <div><%= link_to ep.show.name, show_episodes_path(ep.show) %></div>
+  <% end %>
+  <% if @episode_hash[day].empty? %>
+        <em>None</em>
+  <% end %>
+      </td>
+      <td class="episode-column">
+  <% @episode_hash[day].each do |ep| %>
+        <div><%= ep.title %></div>
+  <% end %>
+      </td>
+    </tr>
+<% end %>
+  </table>
+</div>

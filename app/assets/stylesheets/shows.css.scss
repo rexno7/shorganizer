@@ -1,0 +1,55 @@
+// Place all the styles related to the shows controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.error {
+  color: red;
+}
+
+.showtable tr td {
+  border: 1px solid black;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.showtable tr th {
+  border: 1px solid black;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.upcoming-table {
+  background-color: #C00000;
+  border: 2px solid #700000;
+  border-collapse: collapse;
+  color: lightgrey;
+}
+
+.upcoming-table tr {
+  border: 2px solid #A00000;
+}
+
+.upcoming-table td {
+  padding-right: 7px;
+  padding-left: 7px;
+}
+
+.today {
+  background-color: #FF0000;
+  border: 2px solid #700000;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.upcoming-table a {
+  color: lightgrey;
+  font-weight: normal;
+  text-decoration: none;
+}
+
+.today a {
+  color: white;
+  font-weight: bold;
+}
+
