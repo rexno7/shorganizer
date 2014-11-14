@@ -1,32 +1,35 @@
 <h1><%= @show.name %> Episodes</h1>
 
-<%= form_for @show do |f| %>
-
 <table class='showtable'>
   <tr>
-  	<th><input type='checkbox' onclick="checkAll(this)"> Watched</th>
+  	<th>Watched?</th>
     <th>No</th>
     <th>Title</th>
     <th>Air Date</th>
     <th>Season</th>
   </tr>
-  <% @episodes.each do |episode| %>
-  	<%= f.fields_for :episodes, episode do |e| %>
+ 
+<% @episodes.each do |episode| %>
   <tr>
-  	<td><%= e.check_box :watched, :class => 'watched' %></td>
+  	<td>
+  		<%= form_for([@show, episode], remote: true) do |f| %>
+  			<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  			<%= f.check_box :watched %>
+  			<%= f.submit %>
+  			- or -
+			<%= f.check_box :watched, :onchange => 'this.form.submit();' %>
+		<% end %>
+  	</td>
     <td><%= episode.no %></td>
     <td><%= episode.title %></td>
     <td><%= episode.air_date %></td>
     <td><%= episode.season %></td>
   </tr>
-    <% end %>
-  <% end %>
-</table>
-  <%= f.submit 'Mark Watched' %>
-  
 <% end %>
+</table>
 
 <%= link_to "Invalidate Episodes", invalidate_path(@show) %>
+
 <p>
   <%= link_to 'Back to Shows', shows_path %>
 </p>

@@ -5,7 +5,6 @@ class ShowsController < ApplicationController
   def index
     @shows = Show.all.sort { |x,y| x.name <=> y.name }
     @upcoming_episodes = Episode.upcoming(Date.today).order(:air_date, :air_time).first(10)
-    
     episode_result = Episode.week_view(Episode.view_start,Episode.view_end).order(:air_date, :air_time)
     @episode_hash = {}
     (Episode.view_start..Episode.view_end).each { |day| @episode_hash[day] = [] }
@@ -19,28 +18,26 @@ class ShowsController < ApplicationController
   end
   
   def create
-    @show = Show.new(show_params)
-    
-    # Scrape URL for Episodes and prevent save if crash occurs
-    seasons = scrape_wiki(@show.scrape_url)
-    
-    # Save show and scraped episodes
-    # Use ActiveRecord::Base.transaction to commit only once at the end
-    ActiveRecord::Base.transaction do
-      if @show.save
-        seasons.keys.each do |season|
-          seasons[season].keys.each do |no|
-            @ep = Episode.new(:title => seasons[season][no][:title], :no => no, 
-                        :air_date => seasons[season][no][:oad], :air_time => nil, 
-                        :season => season, :channel => nil, :watched => false, 
-                        :show => @show)
-            @ep.save
-          end
-        end
-        redirect_to @show
-      else
-        render 'new'
-      end
+    @show = Show.new(show_params)    
+    if populate_episodes(@show)
+      redirect_to @show
+    else
+      render 'new'
+    end
+  end
+  
+  def invalidate
+    show = Show.find(params[:id])    
+    if invalidate_episodes(show)
+      redirect_to show_episodes_path(show)
+    else
+      render 'new'
+    end
+  end
+  
+  def invalidate_all
+    Show.all.each do |show|
+      invalidate_episodes(show)
     end
   end
   
@@ -54,21 +51,8 @@ class ShowsController < ApplicationController
   
   def update
     @show = Show.find(params[:id])
-    
-    # seasons = scrape_show(@show.scrape_url)
-    
-    # seasons.keys.each do |season|
-      # seasons[season].keys.each do |no|
-        # @ep = Episode.new(:title => seasons[season][no][:title], :no => no, 
-                    # :air_date => seasons[season][no][:oad], :air_time => nil, 
-                    # :season => season, :channel => nil, :watched => false, 
-                    # :show => @show)
-        # @ep.save
-      # end
-    # end
-    
     if @show.update(show_params)
-      redirect_to @show
+      redirect_to :back
     else
       render 'edit'
     end
@@ -77,13 +61,14 @@ class ShowsController < ApplicationController
   def destroy
     @show = Show.find(params[:id])
     @show.destroy
-    
     redirect_to shows_path
   end
   
   private
     def show_params
-      params.require(:show).permit(:name, :watch_url, :scrape_url, :genre)
+      params.require(:show).permit(:name, :watch_url, :scrape_url, :genre,
+                                   :episodes_attributes => [:id, :title, :no, :air_date, :air_time,
+                                                            :season, :channel, :watched, :show])
     end
     
     # Scrapes a Wiki page with episode information
@@ -153,5 +138,31 @@ class ShowsController < ApplicationController
       end
 
       return seasons
+    end
+
+    def invalidate_episodes(show)
+      # Scrape URL for Episodes and prevent save if crash occurs
+      ActiveRecord::Base.transaction do
+        
+        show.episodes.destroy_all
+      # Save show and scraped episodes
+      # Use ActiveRecord::Base.transaction to commit only once at the end
+      
+        if show.save
+          seasons = scrape_wiki(show.scrape_url)
+          seasons.keys.each do |season|
+            seasons[season].keys.each do |no|
+              ep = Episode.new(:title => seasons[season][no][:title], :no => no, 
+                          :air_date => seasons[season][no][:oad], :air_time => nil, 
+                          :season => season, :channel => nil, :watched => false, 
+                          :show => show)
+              ep.save
+            end
+          end
+        else
+          return false
+        end
+      end
+      return true
     end
 end

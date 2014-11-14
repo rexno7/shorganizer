@@ -9,6 +9,6 @@ class Episode < ActiveRecord::Base
   def self.view_end
     Date.today+5
   end
-  #scope :upcoming, -> (time) { where("air_date >= ?", time) }
-  #scope :week_view, -> (r_start, r_end) { where("air_date >= ? and air_date <= ?", r_start, r_end) }
+  scope :upcoming, -> (time) { where("air_date >= ?", time) }
+  scope :week_view, -> (r_start, r_end) { where("air_date >= ? and air_date <= ?", r_start, r_end) }
 end

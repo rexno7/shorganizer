@@ -14,6 +14,12 @@ class EpisodesController < ApplicationController
     @show = Show.find(params[:show_id])
     @episode = @show.episodes.find(params[:id])
     @episode.destroy
+    redirect_to show_episodes_path(@show)
+  end
+  
+  def watched
+    @show = Show.find(params[:show_id])
+    redirect_to show_episodes_path(@show)
   end
   
   private
